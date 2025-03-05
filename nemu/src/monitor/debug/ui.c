@@ -35,6 +35,34 @@ static int cmd_c(char *args) {
 static int cmd_q(char *args) {
   return -1;
 }
+static int cmd_si(char *args) {
+    int steps = 1;  
+    if (args != NULL) {
+        steps = atoi(args);
+        if (steps <= 0) {
+            printf("Invalid step count.\n");
+            return 0;
+        }
+    }
+    printf("Executing %d instruction(s) step-by-step...\n", steps);
+    return 0;
+}
+static int cmd_info(char *args) {
+  return -1;
+}
+static int cmd_p(char *args) {
+  return -1;
+}
+static int cmd_x(char *args) {
+  return -1;
+}
+static int cmd_w(char *args) {
+  return -1;
+}
+static int cmd_d(char *args) {
+  return -1;
+}
+
 
 static int cmd_help(char *args);
 
@@ -48,6 +76,13 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
+  { "si", "Step execute N instructions", cmd_si },
+  { "info", "Print program state", cmd_info },
+  { "p", "Evaluate expression", cmd_p },
+  { "x", "Examine memory", cmd_x },
+  { "w", "Set watchpoint", cmd_w },
+  { "d", "Delete watchpoint", cmd_d },
+
 
 };
 
