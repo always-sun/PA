@@ -49,7 +49,30 @@ static int cmd_si(char *args) {
     return 0;
 }
 static int cmd_info(char *args) {
-  return -1;
+  if(args ==NULL){
+    printf("Missing argument. Ringht usage: info [r|w]");
+    return 0;
+  }
+  if(strcmp(args,"r")==0){
+     int i;
+        for (i = 0; i < 8; i++)
+            printf("%s    0x%x\n", regsl[i], reg_l(i));
+        printf("eip    0x%x\n", cpu.eip);
+        for (i = 0; i < 8; i++)
+            printf("%s    0x%x\n", regsw[i], reg_w(i));
+        for (i = 0; i < 8; i++)
+            printf("%s    0x%x\n", regsb[i], reg_b(i));
+        return 0;
+  }
+
+  else if(strcmp(args,"w")==0){
+    printf("Printing watchingpoints...\n");
+    print_watchpoints();
+    return 0;
+  }
+  
+  printf("Unknown argument: %s\n", args);
+  return 0;
 }
 static int cmd_p(char *args) {
   return -1;

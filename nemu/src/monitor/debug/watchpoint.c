@@ -19,5 +19,15 @@ void init_wp_pool() {
 }
 
 /* TODO: Implement the functionality of watchpoint */
+void print_watchpoints() {
+  WP* curr = head;
+  if (head == NULL) {
+    printf("No watchpoints.\n");
+  }
+  while (curr != NULL) {
+    printf("Watchpoint:  %d:\t%s\t\t%d\n", curr->NO, curr->expr, curr->value);
+    curr = curr->next;
+  }
+}
 
 
