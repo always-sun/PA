@@ -45,6 +45,7 @@ static int cmd_si(char *args) {
         }
     }
     printf("Executing %d instruction(s) step-by-step...\n", steps);
+    cpu_exec(steps);
     return 0;
 }
 static int cmd_info(char *args) {
