@@ -74,18 +74,43 @@ static int cmd_info(char *args) {
   printf("Unknown argument: %s\n", args);
   return 0;
 }
-static int cmd_p(char *args) {
-  return -1;
-}
+
 static int cmd_x(char *args) {
-  return -1;
+    if (args == NULL) {
+        printf("No expr\n");
+        return 0;
+    }
+
+    int N;
+    char express[256];
+
+    if (sscanf(args, "%d %255s", &N, express) != 2 || N <= 0) {
+        printf("Invalid arguments. Right Usage: x N EXPR\n");
+        return 0;
+    }
+
+    // 解析表达式
+    bool success = true;
+    uint32_t addr = (uint32_t)expr(express, &success);  // 确保返回值是 uint32_t
+    if (!success) {
+        printf("Failed to evaluate expression: %s\n", express);
+        return 0;
+    }
+
+    // 打印起始地址
+    printf("Reading %d words from memory at address calculated from: %s\n", N, express);
+    
+    // 逐个读取 4 字节数据，并优化输出格式
+    for (int i = 0; i < N; i++) {
+        uint32_t value = vaddr_read(addr + i * 4, 4);
+        printf("0x%08X: 0x%08X  ", addr + i * 4, value);
+        if ((i + 1) % 4 == 0) printf("\n");  // 每 4 个地址换行
+    }
+    printf("\n");
+
+    return 0;
 }
-static int cmd_w(char *args) {
-  return -1;
-}
-static int cmd_d(char *args) {
-  return -1;
-}
+
 
 
 static int cmd_help(char *args);
@@ -102,10 +127,8 @@ static struct {
   /* TODO: Add more commands */
   { "si", "Step execute N instructions", cmd_si },
   { "info", "Print program state", cmd_info },
-  { "p", "Evaluate expression", cmd_p },
   { "x", "Examine memory", cmd_x },
-  { "w", "Set watchpoint", cmd_w },
-  { "d", "Delete watchpoint", cmd_d },
+
 
 
 };

@@ -23,6 +23,7 @@ void print_watchpoints() {
   WP* curr = head;
   if (head == NULL) {
     printf("No watchpoints.\n");
+    return ;
   }
   while (curr != NULL) {
     printf("Watchpoint:  %d:\t%s\t\t%d\n", curr->NO, curr->expr, curr->value);
