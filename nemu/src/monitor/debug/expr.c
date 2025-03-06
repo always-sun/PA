@@ -7,11 +7,27 @@
 #include <regex.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ
+  TK_NOTYPE = 256,  // 无类型
+  TK_DEC,           // 十进制数
+  TK_HEX,           // 十六进制数
+  TK_REG,           // 寄存器（$esp, $eax）
+  TK_OR,            // || 逻辑或
+  TK_AND,           // && 逻辑与
+  TK_EQ,            // == 等于
+  TK_NEQ,           // != 不等于
+  TK_ADD,           // + 加法
+  TK_MIN,           // - 减法
+  TK_MUL,           // * 乘法
+  TK_DIV,           // / 除法
+  TK_NOT,           // ! 逻辑非
+  TK_POI,           // * 指针解引用
+  TK_NEG,           // - 负号（单目运算）
+  TK_LP,            // ( 左括号
+  TK_RP             // ) 右括号
 
   /* TODO: Add more token types */
 
-};
+};TokenType;
 
 static struct rule {
   char *regex;
@@ -22,9 +38,21 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
-  {" +", TK_NOTYPE},    // spaces
-  {"\\+", '+'},         // plus
-  {"==", TK_EQ}         // equal
+   {" +", TK_NOTYPE},   // spaces
+  {"\\+", TK_ADD},     // plus
+  {"-", TK_MIN},      // minus
+  {"\\*", TK_MUL},    // multiply
+  {"/", TK_DIV},      // divide
+  {"==", TK_EQ},     // equal
+  {"!=", TK_NEQ},    // not equal
+  {"&&", TK_AND},    // logical and
+  {"\\|\\|", TK_OR}, // logical or
+  {"!", TK_NOT},     // logical not
+  {"\\$(eax|ecx|edx|ebx|esp|ebp|esi|edi|eip|ax|cx|dx|bx|sp|bp|si|di|al|cl|dl|bl|ah|ch|dh|bh)", TK_REG}, // register
+  {"0x[0-9a-fA-F]+", TK_HEX}, // hex number
+  {"[0-9]+", TK_DEC}, // decimal number
+  {"\\(", TK_LP},     // left parenthesis
+  {"\\)", TK_RP}      // right parenthesis
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -78,9 +106,12 @@ static bool make_token(char *e) {
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
+   
 
+  
         switch (rules[i].token_type) {
-          default: TODO();
+          default:   printf("no match at position %d\n%s\n%*.s^\n", position, e, position, "");
+
         }
 
         break;
