@@ -74,6 +74,10 @@ static int cmd_info(char *args) {
   printf("Unknown argument: %s\n", args);
   return 0;
 }
+static int cmd_p(char *args){
+  
+    return 0;
+  };
 
 static int cmd_x(char *args) {
     if (args == NULL) {
@@ -111,7 +115,14 @@ static int cmd_x(char *args) {
     return 0;
 }
 
-
+static int cmd_w(char *args){
+  
+    return 0;
+  }
+static int cmd_d(char *args){
+  
+    return 0;
+  }
 
 static int cmd_help(char *args);
 
@@ -127,9 +138,10 @@ static struct {
   /* TODO: Add more commands */
   { "si", "Step execute N instructions", cmd_si },
   { "info", "Print program state", cmd_info },
+  { "p", "Evaluate and print the value of an expression", cmd_p },
   { "x", "Examine memory", cmd_x },
-
-
+  { "w", "Set a watchpoint", cmd_w },
+  { "d", "Delete a watchpoint", cmd_d },
 
 };
 

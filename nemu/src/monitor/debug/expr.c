@@ -27,7 +27,7 @@ enum {
 
   /* TODO: Add more token types */
 
-};TokenType;
+}TokenType;
 
 static struct rule {
   char *regex;
@@ -106,13 +106,65 @@ static bool make_token(char *e) {
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
-   
 
-  
-        switch (rules[i].token_type) {
-          default:   printf("no match at position %d\n%s\n%*.s^\n", position, e, position, "");
-
+           // Token 太长，报错并返回
+        if (substr_len >= 32) {
+          printf("Error: Token too long at position %d!\n", position);
+          return false;
         }
+        // 忽略空格
+        if (rules[i].token_type == TK_NOTYPE) {
+          break;
+        }
+
+        switch (rules[i].token_type) {
+           case TK_ADD: case TK_MIN: case TK_MUL: case TK_DIV:
+        case TK_LP: case TK_RP: case TK_NOT:
+            // 直接存储单字符运算符
+            tokens[nr_token].type = rules[i].token_type;
+            tokens[nr_token].str[0] = substr_start[0];
+            tokens[nr_token].str[1] = '\0';
+            nr_token++;
+            break;
+
+        case TK_EQ: case TK_NEQ: case TK_AND: case TK_OR:
+            // 存储双字符运算符 (==, !=, &&, ||)
+            tokens[nr_token].type = rules[i].token_type;
+            tokens[nr_token].str[0] = substr_start[0];
+            tokens[nr_token].str[1] = substr_start[1];
+            tokens[nr_token].str[2] = '\0';
+            nr_token++;
+            break;
+
+        case TK_DEC:
+            // 存储十进制数
+            tokens[nr_token].type = TK_DEC;
+            strncpy(tokens[nr_token].str, substr_start, substr_len);
+            tokens[nr_token].str[substr_len] = '\0';
+            nr_token++;
+            break;
+
+        case TK_HEX:
+            // 存储十六进制数，去掉 "0x" 前缀
+            tokens[nr_token].type = TK_HEX;
+            strncpy(tokens[nr_token].str, substr_start + 2, substr_len - 2);
+            tokens[nr_token].str[substr_len - 2] = '\0';
+            nr_token++;
+            break;
+
+        case TK_REG:
+            // 存储寄存器名，去掉 "$" 前缀
+            tokens[nr_token].type = TK_REG;
+            strncpy(tokens[nr_token].str, substr_start + 1, substr_len - 1);
+            tokens[nr_token].str[substr_len - 1] = '\0';
+            nr_token++;
+            break;
+
+        default:
+          printf("no match at position %d\n%s\n%*.s^\n", position, e, position, "");
+          
+          
+          }
 
         break;
       }
