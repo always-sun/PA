@@ -179,6 +179,111 @@ static bool make_token(char *e) {
   return true;
 }
 
+
+bool check_parentheses(int start, int end) {
+  // Check if the first token is not '(' or the last token is not ')'
+  if (tokens[start].type != TK_LP || tokens[end].type != TK_RP) {
+    return false;
+  }
+
+  int balance = 0; // Balance counter for parentheses
+  for (int i = start + 1; i < end; i++) {
+    if (tokens[i].type == TK_LP) balance++;
+    else if (tokens[i].type == TK_RP) {
+      if (balance == 0) return false; // Extra closing parenthesis
+      balance--;
+    }
+  }
+
+  if (balance != 0) {
+    printf("Parentheses are unbalanced\n");
+    return false;
+  }
+  return true;
+}
+int priority(int i) {
+    if (tokens[i].type == TK_NEGATIVE || tokens[i].type == TK_DEREF || tokens[i].type == '!') 
+        return 4;
+    else if (tokens[i].type == '*' || tokens[i].type == '/') 
+        return 3;
+    else if (tokens[i].type == '+' || tokens[i].type == '-') 
+        return 2;
+    else if (tokens[i].type == TK_EQ || tokens[i].type == TK_NEQ) 
+        return 1;
+    else if (tokens[i].type == TK_AND || tokens[i].type == TK_OR) 
+        return 0;
+    return 10000;
+}
+int DominantOp(int p, int q) {
+    int i = 0, j, cnt;
+    int op = 10000, opp, pos = -1;
+    for (i = p; i <= q; i++) {
+        if (tokens[i].type == TK_NUMBER || tokens[i].type == TK_REG || tokens[i].type == TK_HEX)
+            continue;
+        else if (tokens[i].type == '(') {
+            cnt = 0;
+            for (j = i + 1; j <= q; j++) {
+                if (tokens[j].type == ')') {
+                    cnt++;
+                    i += cnt;
+                    break;
+                } else {
+                    cnt++;
+                }
+            }
+        } else {
+            opp = priority(i);
+            if (opp <= op) {
+                pos = i;
+                op = opp;
+            }
+        }
+    }
+    return pos;
+}
+
+uint32_t eval(int p, int q) {
+  if (p > q) {
+    return 0;
+  }
+  if (p == q) {
+    if (tokens[p].type == TK_DEC) {
+      return atoi(tokens[p].str);
+    } else if (tokens[p].type == TK_HEX) {
+      return strtol(tokens[p].str, NULL, 16);
+    } else if (tokens[p].type == TK_REG) {
+      return get_register_value(tokens[p].str);
+    }
+  }
+
+  if (check_parentheses(p, q)) {
+    return eval(p + 1, q - 1);
+  }
+
+  int op = dominant_operator(p, q);
+  if (op == -1) {
+    return 0;
+  }
+
+  uint32_t val1 = eval(p, op - 1);
+  uint32_t val2 = eval(op + 1, q);
+
+  switch (tokens[op].type) {
+    case TK_ADD: return val1 + val2;
+    case TK_MIN: return val1 - val2;
+    case TK_MUL: return val1 * val2;
+    case TK_DIV: return val2 ? val1 / val2 : 0;
+    case TK_EQ: return val1 == val2;
+    case TK_NEQ: return val1 != val2;
+    case TK_AND: return val1 && val2;
+    case TK_OR: return val1 || val2;
+    case TK_NEG: return -val2;
+    case TK_DEREF: return vaddr_read(val2, 4);
+    default: assert(0);
+  }
+  return 0;
+}
+
 uint32_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
@@ -186,7 +291,19 @@ uint32_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  TODO();
+  for (int i = 0; i < nr_token; i++) {
+    if (tokens[i].type == '-') {
+      if (i == 0 || (tokens[i - 1].type != TK_DEC && tokens[i - 1].type != TK_HEX && tokens[i - 1].type != TK_RP)) {
+        tokens[i].type = TK_NEG;
+      }
+    } else if (tokens[i].type == '*') {
+      if (i == 0 || (tokens[i - 1].type != TK_DEC && tokens[i - 1].type != TK_HEX && tokens[i - 1].type != TK_RP)) {
+        tokens[i].type = TK_DEREF;
+      }
+    }
+  }
 
-  return 0;
+  *success = true;
+  return eval(0, nr_token - 1);
+
 }

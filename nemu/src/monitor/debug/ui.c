@@ -75,9 +75,22 @@ static int cmd_info(char *args) {
   return 0;
 }
 static int cmd_p(char *args){
-  
-    return 0;
-  };
+    if (args == NULL) {
+      printf("Args is required.\n");
+      return 0;
+    }
+    
+    bool success;
+    
+    uint32_t result = expr(args, &success);
+    
+    if (success) {
+      printf("Result = %d\n", result);
+    } else {
+      printf("Failed to evaluate the expression.\n");
+    }
+      return 0;
+    };
 
 static int cmd_x(char *args) {
     if (args == NULL) {
