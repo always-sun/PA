@@ -304,11 +304,15 @@ uint32_t eval(int p, int q) {
     int val2 = eval(op + 1, q);
 
     switch (tokens[op].type) {
-        case '+': return val1 + val2;
-        case '-': return val1 - val2;
-        case '*': return val1 * val2;
-        case '/': return val1 / val2;
+        case TK_ADD: return val1 + val2;
+        case TK_MIN: return val1 - val2;
+        case TK_MUL: return val1 * val2;
+        case TK_DIV: return val1 / val2;
         case TK_EQ: return val1 == val2;
+        case TK_NEQ: return val1 != val2;
+        case TK_AND: return val1 && val2;
+        case TK_OR: return val1 || val2;
+        default:assert(0);
     }
     }
     }
@@ -324,15 +328,7 @@ uint32_t expr(char *e, bool *success) {
 
   /* TODO: Insert codes to evaluate the expression. */
   for (int i = 0; i < nr_token; i++) {
-    if (tokens[i].type == '-') {
-      if (i == 0 || (tokens[i - 1].type != TK_DEC && tokens[i - 1].type != TK_HEX && tokens[i - 1].type != TK_RP)) {
-        tokens[i].type = TK_NEG;
-      }
-    } else if (tokens[i].type == '*') {
-      if (i == 0 || (tokens[i - 1].type != TK_DEC && tokens[i - 1].type != TK_HEX && tokens[i - 1].type != TK_RP)) {
-        tokens[i].type = TK_POI;
-      }
-    }
+
   }
 
   *success = true;
