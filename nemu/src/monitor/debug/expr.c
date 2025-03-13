@@ -10,7 +10,6 @@ enum {
   TK_NOTYPE = 256,  // 无类型
   TK_DEC,           // 十进制数
   TK_HEX,           // 十六进制数
-  TK_NUM,
   TK_REG,           // 寄存器（$esp, $eax）
   TK_OR,            // || 逻辑或
   TK_AND,           // && 逻辑与
@@ -51,8 +50,7 @@ static struct rule {
   {"!", TK_NOT},     // logical not
   {"\\$(eax|ecx|edx|ebx|esp|ebp|esi|edi|eip|ax|cx|dx|bx|sp|bp|si|di|al|cl|dl|bl|ah|ch|dh|bh)", TK_REG}, // register
   {"0x[0-9a-fA-F]+", TK_HEX}, // hex number
-  {"0[1-9][0-9]*", TK_NUM},
-  {"[0-9]+", TK_DEC}, // decimal number
+  {"0|([1-9][0-9]*)", TK_DEC}, // decimal number
   {"\\(", TK_LP},     // left parenthesis
   {"\\)", TK_RP}      // right parenthesis
 };
@@ -220,7 +218,7 @@ int dominant_operator(int p, int q) {
     int i = 0, j, cnt;
     int op = 10000, opp, pos = -1;
     for (i = p; i <= q; i++) {
-        if (tokens[i].type == TK_NUM || tokens[i].type == TK_REG || tokens[i].type == TK_HEX)
+        if (tokens[i].type == TK_DEC || tokens[i].type == TK_REG || tokens[i].type == TK_HEX)
             continue;
         else if (tokens[i].type == '(') {
             cnt = 0;
@@ -251,7 +249,7 @@ uint32_t eval(int p, int q) {
     if (p == q) {
         int num;
         switch (tokens[p].type) {
-            case TK_NUM:
+            case TK_DEC:
                 sscanf(tokens[p].str, "%d", &num);
                 return num;
             case TK_HEX:
