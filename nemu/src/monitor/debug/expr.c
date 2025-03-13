@@ -219,10 +219,10 @@ int dominant_operator(int p, int q) {
     for (i = p; i <= q; i++) {
         if (tokens[i].type == TK_DEC || tokens[i].type == TK_REG || tokens[i].type == TK_HEX)
             continue;
-        else if (tokens[i].type == '(') {
+        else if (tokens[i].type == TK_LP) {
             cnt = 0;
             for (j = i + 1; j <= q; j++) {
-                if (tokens[j].type == ')') {
+                if (tokens[j].type == TK_RP) {
                     cnt++;
                     i += cnt;
                     break;
@@ -243,7 +243,8 @@ int dominant_operator(int p, int q) {
 
 uint32_t eval(int p, int q) {
     if (p > q) {
-        return 0;
+      printf("error p=%d  q=%d \n",p,q);
+      assert(0);
     }
     if (p == q) {
         int num;
