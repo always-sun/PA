@@ -112,12 +112,12 @@ static bool make_token(char *e) {
           printf("Error: Token too long at position %d!\n", position);
           return false;
         }
-        // 忽略空格
-        if (rules[i].token_type == TK_NOTYPE) {
-          break;
-        }
-
+             
         switch (rules[i].token_type) {
+          case TK_NOTYPE:{
+             break;
+          }
+
            case TK_ADD: case TK_MIN: case TK_MUL: case TK_DIV:
         case TK_LP: case TK_RP: case TK_NOT:
             // 直接存储单字符运算符
@@ -158,11 +158,10 @@ static bool make_token(char *e) {
             strncpy(tokens[nr_token].str, substr_start + 1, substr_len - 1);
             tokens[nr_token].str[substr_len - 1] = '\0';
             nr_token++;
-            break;
+            break;   
 
         default:
           printf("no match at position %d\n%s\n%*.s^\n", position, e, position, "");
-          
           
           }
 
@@ -204,9 +203,9 @@ bool check_parentheses(int start, int end) {
 int priority(int i) {
     if (tokens[i].type == TK_NEG || tokens[i].type == TK_POI || tokens[i].type == '!') 
         return 4;
-    else if (tokens[i].type == '*' || tokens[i].type == '/') 
+    else if (tokens[i].type == TK_MUL || tokens[i].type == TK_DIV) 
         return 3;
-    else if (tokens[i].type == '+' || tokens[i].type == '-') 
+    else if (tokens[i].type == TK_ADD || tokens[i].type == TK_MIN) 
         return 2;
     else if (tokens[i].type == TK_EQ || tokens[i].type == TK_NEQ) 
         return 1;
