@@ -120,7 +120,7 @@ static int cmd_x(char *args) {
     // 逐个读取 4 字节数据，并优化输出格式
     for (int i = 0; i < N; i++) {
         uint32_t value = vaddr_read(addr + i * 4, 4);
-        printf("0x%08X: 0x%08X  ", addr + i * 4, value);
+        printf("0x%08X: 0x%08X  \n", addr + i * 4, value);
         if ((i + 1) % 4 == 0) printf("\n");  // 每 4 个地址换行
     }
     printf("\n");
