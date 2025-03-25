@@ -16,6 +16,8 @@ make_EHelper(nemu_trap);
 make_EHelper(xor);
 
 // control.c
+make_EHelper(jmp);
+make_EHelper(jmp_rm);
 make_EHelper(call);
 make_EHelper(ret);
 
