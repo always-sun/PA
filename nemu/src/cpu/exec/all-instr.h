@@ -18,11 +18,22 @@ make_EHelper(leave);
 make_EHelper(operand_size);
 
 //special.c
+make_EHelper(nop);
 make_EHelper(inv);
 make_EHelper(nemu_trap);
 
 // logic.c
 make_EHelper(xor);
+make_EHelper(test);
+make_EHelper(and);
+make_EHelper(or);
+make_EHelper(sar);
+make_EHelper(shl);
+make_EHelper(shr);
+make_EHelper(setcc);
+make_EHelper(not);
+make_EHelper(rol);
+
 
 // control.c
 make_EHelper(jmp);
