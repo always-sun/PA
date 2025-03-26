@@ -216,22 +216,38 @@ static inline void rtl_update_ZFSF(const rtlreg_t* result, int width) {
 }
 
 
-static inline void add_overthrow(rtlreg_t* dest, const rtlreg_t* res, const rtlreg_t* lhs, const rtlreg_t* rhs, int width) {
-  int shift = width * 8 - 1;
-  int sign1 = (*lhs >> shift) & 1;
-  int sign2 = (*rhs >> shift) & 1;
-  int sign_res = (*res >> shift) & 1;
-
-  *dest = (sign1 == sign2 && sign1 != sign_res) ? 1 : 0;
+static inline void add_overthrow(rtlreg_t* dest, const rtlreg_t* arith_res, const rtlreg_t* src1, const rtlreg_t* src2, int width) {
+   t2 = (*src1 >> (width * 8 - 1)) == 1 ? 1 : 0;
+  t3 = (*src2 >> (width * 8 - 1)) == 1 ? 1 : 0;
+  s0 = (*arith_res >> (width * 8 - 1) == 1 ? 1 : 0);
+  if (t2 ^ t3) {
+    if (t2 ^ s0) {
+      *dest = 1;
+    }
+    else {
+      *dest = 0;
+    }
+  }
+  else {
+    *dest = 0;
+  }
 }
 
-static inline void sub_overthrow(rtlreg_t* dest, const rtlreg_t* res, const rtlreg_t* lhs, const rtlreg_t* rhs, int width) {
-  int shift = width * 8 - 1;
-  int sign1 = (*lhs >> shift) & 1;
-  int sign2 = (*rhs >> shift) & 1;
-  int sign_res = (*res >> shift) & 1;
-
-  *dest = (sign1 != sign2 && sign1 != sign_res) ? 1 : 0;
+static inline void sub_overthrow(rtlreg_t* dest, const rtlreg_t* arith_res, const rtlreg_t* src1, const rtlreg_t* src2, int width) {
+  t2 = (*src1 >> (width * 8 - 1)) == 1 ? 1 : 0;
+  t3 = (*src2 >> (width * 8 - 1)) == 1 ? 1 : 0;
+  s0 = (*arith_res >> (width * 8 - 1) == 1 ? 1 : 0);
+  if (!(t2 ^ t3)) {
+    if (t2 ^ s0) {
+      *dest = 1;
+    }
+    else {
+      *dest = 0;
+    }
+  }
+  else {
+    *dest = 0;
+  }
 }
 
 
