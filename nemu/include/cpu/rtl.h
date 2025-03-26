@@ -3,7 +3,7 @@
 
 #include "nemu.h"
 
-extern rtlreg_t t0, t1, t2, t3,s0,s1;
+extern rtlreg_t t0, t1, t2, t3, s0, s1;
 extern const rtlreg_t tzero;
 
 /* RTL basic instructions */
@@ -214,5 +214,25 @@ static inline void rtl_update_ZFSF(const rtlreg_t* result, int width) {
   rtl_update_ZF(result, width);
   rtl_update_SF(result, width);
 }
+
+
+static inline void add_overthrow(rtlreg_t* dest, const rtlreg_t* res, const rtlreg_t* lhs, const rtlreg_t* rhs, int width) {
+  int shift = width * 8 - 1;
+  int sign1 = (*lhs >> shift) & 1;
+  int sign2 = (*rhs >> shift) & 1;
+  int sign_res = (*res >> shift) & 1;
+
+  *dest = (sign1 == sign2 && sign1 != sign_res) ? 1 : 0;
+}
+
+static inline void sub_overthrow(rtlreg_t* dest, const rtlreg_t* res, const rtlreg_t* lhs, const rtlreg_t* rhs, int width) {
+  int shift = width * 8 - 1;
+  int sign1 = (*lhs >> shift) & 1;
+  int sign2 = (*rhs >> shift) & 1;
+  int sign_res = (*res >> shift) & 1;
+
+  *dest = (sign1 != sign2 && sign1 != sign_res) ? 1 : 0;
+}
+
 
 #endif
