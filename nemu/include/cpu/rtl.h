@@ -215,39 +215,25 @@ static inline void rtl_update_ZFSF(const rtlreg_t* result, int width) {
   rtl_update_SF(result, width);
 }
 
-
-static inline void sub_overthrow(rtlreg_t* dest, const rtlreg_t* arith_res, const rtlreg_t* src1, const rtlreg_t* src2, int width) {
-  t2 = (*src1 >> (width * 8 - 1)) == 1 ? 1 : 0;
-  t3 = (*src2 >> (width * 8 - 1)) == 1 ? 1 : 0;
-  s0 = (*arith_res >> (width * 8 - 1) == 1 ? 1 : 0);
-  if (t2 ^ t3) {
-    if (t2 ^ s0) {
-      *dest = 1;
-    }
-    else {
-      *dest = 0;
-    }
-  }
-  else {
-    *dest = 0;
-  }
+// 提取符号位：取最高位（width 单位是字节）
+static inline int get_sign_bit(const rtlreg_t* val, int width) {
+  return (*val >> (width * 8 - 1)) & 1;
 }
 
-static inline void add_overthrow(rtlreg_t* dest, const rtlreg_t* arith_res, const rtlreg_t* src1, const rtlreg_t* src2, int width) {
-  t2 = (*src1 >> (width * 8 - 1)) == 1 ? 1 : 0;
-  t3 = (*src2 >> (width * 8 - 1)) == 1 ? 1 : 0;
-  s0 = (*arith_res >> (width * 8 - 1) == 1 ? 1 : 0);
-  if (!(t2 ^ t3)) {
-    if (t2 ^ s0) {
-      *dest = 1;
-    }
-    else {
-      *dest = 0;
-    }
-  }
-  else {
-    *dest = 0;
-  }
+// 有符号加法溢出判断
+static inline void add_overthrow(rtlreg_t* dest, const rtlreg_t* res, const rtlreg_t* lhs, const rtlreg_t* rhs, int width) {
+  int sign1 = get_sign_bit(lhs, width);
+  int sign2 = get_sign_bit(rhs, width);
+  int sign_res = get_sign_bit(res, width);
+  *dest = (sign1 == sign2 && sign1 != sign_res);
+}
+
+// 有符号减法溢出判断
+static inline void sub_overthrow(rtlreg_t* dest, const rtlreg_t* res, const rtlreg_t* lhs, const rtlreg_t* rhs, int width) {
+  int sign1 = get_sign_bit(lhs, width);
+  int sign2 = get_sign_bit(rhs, width);
+  int sign_res = get_sign_bit(res, width);
+  *dest = (sign1 != sign2 && sign1 != sign_res);
 }
 
 
