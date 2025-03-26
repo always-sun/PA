@@ -216,8 +216,8 @@ static inline void rtl_update_ZFSF(const rtlreg_t* result, int width) {
 }
 
 
-static inline void add_overthrow(rtlreg_t* dest, const rtlreg_t* arith_res, const rtlreg_t* src1, const rtlreg_t* src2, int width) {
-   t2 = (*src1 >> (width * 8 - 1)) == 1 ? 1 : 0;
+static inline void sub_overthrow(rtlreg_t* dest, const rtlreg_t* arith_res, const rtlreg_t* src1, const rtlreg_t* src2, int width) {
+  t2 = (*src1 >> (width * 8 - 1)) == 1 ? 1 : 0;
   t3 = (*src2 >> (width * 8 - 1)) == 1 ? 1 : 0;
   s0 = (*arith_res >> (width * 8 - 1) == 1 ? 1 : 0);
   if (t2 ^ t3) {
@@ -233,7 +233,7 @@ static inline void add_overthrow(rtlreg_t* dest, const rtlreg_t* arith_res, cons
   }
 }
 
-static inline void sub_overthrow(rtlreg_t* dest, const rtlreg_t* arith_res, const rtlreg_t* src1, const rtlreg_t* src2, int width) {
+static inline void add_overthrow(rtlreg_t* dest, const rtlreg_t* arith_res, const rtlreg_t* src1, const rtlreg_t* src2, int width) {
   t2 = (*src1 >> (width * 8 - 1)) == 1 ? 1 : 0;
   t3 = (*src2 >> (width * 8 - 1)) == 1 ? 1 : 0;
   s0 = (*arith_res >> (width * 8 - 1) == 1 ? 1 : 0);
@@ -249,6 +249,7 @@ static inline void sub_overthrow(rtlreg_t* dest, const rtlreg_t* arith_res, cons
     *dest = 0;
   }
 }
+
 
 
 #endif
