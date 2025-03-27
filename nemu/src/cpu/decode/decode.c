@@ -305,12 +305,21 @@ make_DHelper(out_a2dx) {
 #endif
 }
 
-void operand_write(Operand *op, rtlreg_t* src) {
+/*void operand_write(Operand *op, rtlreg_t* src) {
   if (op->type == OP_TYPE_REG) { rtl_sr(op->reg, op->width, src); }
   else if (op->type == OP_TYPE_MEM) { rtl_sm(&op->addr, op->width, src); }
   else { assert(0); }
-
-  printf("[operand_write] reg: %d (width=%d), value = 0x%08x\n",
-       op->reg, op->width, *src);
-
+}*/
+void operand_write(Operand *op, rtlreg_t* src) {
+  if (op->type == OP_TYPE_REG) {
+    rtl_sr(op->reg, op->width, src);
+    printf("[operand_write] write to REG %d (width=%d), value = 0x%08x\n",
+           op->reg, op->width, *src);
+  } else if (op->type == OP_TYPE_MEM) {
+    rtl_sm(&op->addr, op->width, src);
+    printf("[operand_write] write to MEM[0x%08x] (width=%d), value = 0x%08x\n",
+           op->addr, op->width, *src);
+  } else {
+    assert(0);
+  }
 }
