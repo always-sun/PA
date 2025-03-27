@@ -143,7 +143,8 @@ void difftest_step(uint32_t eip) {
     is_skip_qemu = false;
     return;
   }
-  printf("[DIFFTEST] Executing instruction at eip = 0x%08x\n", cpu.eip);
+  printf("[DIFFTEST] eip=0x%08x eax=0x%08x edx=0x%08x\n", cpu.eip, cpu.eax, cpu.edx);
+
 
   gdb_si();
   gdb_getregs(&r);
