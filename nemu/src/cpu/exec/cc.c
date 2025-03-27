@@ -15,31 +15,31 @@ void rtl_setcc(rtlreg_t* dest, uint8_t subcode) {
   // dest <- ( cc is satisfied ? 1 : 0)
   switch (subcode & 0xe) {
     case CC_O: {
-      *dest = cpu.eflags.OF == 1 ? 1 : 0;
+      *dest = cpu.eflags.OF ;
       break;
     }
     case CC_B: {
-      *dest = cpu.eflags.CF == 1 ? 1 : 0;
+      *dest = cpu.eflags.CF ;
       break;
     }
     case CC_E: {
-      *dest = cpu.eflags.ZF == 1 ? 1 : 0;
+      *dest = cpu.eflags.ZF ;
       break;
     }
     case CC_BE: {
-      *dest = (cpu.eflags.CF == 1 || cpu.eflags.ZF == 1) ? 1 : 0;
+      *dest = (cpu.eflags.CF  || cpu.eflags.ZF ) ;
       break;
     }
     case CC_S: {
-      *dest = cpu.eflags.SF == 1 ? 1 : 0;
+      *dest = cpu.eflags.SF ;
       break;
     }
     case CC_L: {
-      *dest = (cpu.eflags.SF != cpu.eflags.OF) ? 1 : 0;
+      *dest = (cpu.eflags.SF != cpu.eflags.OF) ;
       break;
     }
     case CC_LE: {
-      *dest = ((cpu.eflags.SF != cpu.eflags.OF) || cpu.eflags.ZF == 1) ? 1 : 0;
+      *dest = ((cpu.eflags.SF != cpu.eflags.OF) || cpu.eflags.ZF ) ? 1 : 0;
       break;
     }
     default: panic("should not reach here");
