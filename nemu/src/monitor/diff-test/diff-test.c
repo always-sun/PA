@@ -147,13 +147,13 @@ void difftest_step(uint32_t eip) {
 
   gdb_si();
   gdb_getregs(&r);
-  // 先打印执行的指令地址
+  /*  // 先打印执行的指令地址
   printf("[DIFFTEST] eip=0x%08x\n", cpu.eip);
   // 打印 NEMU 状态（当前已经执行完，和 QEMU 是对等状态）
   printf("  NEMU eax=0x%08x ebx=0x%08x ecx=0x%08x edx=0x%08x\n",cpu.eax, cpu.ebx, cpu.ecx, cpu.edx);
   // 打印 QEMU 状态
   printf("  QEMU eax=0x%08x ebx=0x%08x ecx=0x%08x edx=0x%08x\n",r.eax, r.ebx, r.ecx, r.edx);
-
+  */
   // TODO: Check the registers state with QEMU.
   // Set `diff` as `true` if they are not the same.
    if (r.eip != cpu.eip) {
