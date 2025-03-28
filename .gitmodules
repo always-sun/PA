@@ -1,0 +1,3 @@
+[submodule "nexus-am/libs/klib"]
+	path = nexus-am/libs/klib
+	url = https://github.com/NJU-ProjectN/ics-pa.git
