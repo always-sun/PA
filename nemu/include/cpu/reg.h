@@ -32,6 +32,13 @@ union{
 
 };
   vaddr_t eip;
+
+struct{
+		uint32_t limit;
+		uint32_t base;
+  }idtr;
+  uint32_t cs;
+
   union{
         uint32_t val;
         struct{
