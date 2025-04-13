@@ -17,25 +17,6 @@ size_t events_read(void *buf, size_t len) {
   if (key == _KEY_NONE) {
     sprintf(buf, "t %d\n", _uptime());
   }
-  else {
-    bool keydown = false;
-    if (key & 0x8000) {
-      key ^= 0x8000;
-      keydown = true; 
-    }
-    sprintf(buf, "%s %s\n", keydown ? "kd":"ku", keyname[key]);
-    if (key == 0xd && keydown) {
-      current_game = (current_game == 0 ? 1 : 0);
-    }
-  }
-  if (strlen(buf) > len) {
-    char *tmp;
-    for(int i = 0; i < len; i++) {
-      tmp[i] = ((char*)buf)[i];
-    }
-    buf = (void*)tmp;
-    return len;
-  }
   return strlen(buf);
 }
 
