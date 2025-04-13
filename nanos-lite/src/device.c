@@ -9,6 +9,7 @@ static const char *keyname[256] __attribute__((used)) = {
 };
 
 
+int current_game = 0;
 extern off_t fs_lseek(int fd, off_t offset, int whence);
 
 size_t events_read(void *buf, size_t len) {
@@ -24,8 +25,7 @@ size_t events_read(void *buf, size_t len) {
     }
     sprintf(buf, "%s %s\n", keydown ? "kd":"ku", keyname[key]);
     if (key == 0xd && keydown) {
-      //extern void update_current_game();
-      //update_current_game();
+      current_game = (current_game == 0 ? 1 : 0);
     }
   }
   if (strlen(buf) > len) {
