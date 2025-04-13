@@ -1,7 +1,18 @@
 #include "common.h"
 #include "syscall.h"
 
-
+ uintptr_t sys_write(int fd, const void *buf, size_t count){
+   uintptr_t i = 0;
+   if(fd==1||fd==2){
+     for(;i<count;i++){
+       _putc(((char*)buf)[i]);
+     }
+   }
+   else{
+     return -1;
+   }
+  return i;
+}
 
 _RegSet* do_syscall(_RegSet *r) {
   uintptr_t a[4];
@@ -19,6 +30,10 @@ _RegSet* do_syscall(_RegSet *r) {
     case SYS_exit:
       _halt(a[1]);
       break;
+    case SYS_write:
+      res = sys_write(a[1], (void*)a[2], a[3]);
+      break;
+
 
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
