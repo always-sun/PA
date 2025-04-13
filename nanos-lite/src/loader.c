@@ -1,6 +1,6 @@
 #include "common.h"
 
-#define DEFAULT_ENTRY ((void *)0x8048000)
+#define DEFAULT_ENTRY ((void *)0x4000000)
 
 extern void* new_page(void);
 extern void ramdisk_read(void* buf, off_t offset, size_t len);
@@ -19,20 +19,9 @@ uintptr_t loader(_Protect *as, const char *filename) {
   int fd = fs_open(filename, 0, 0);
   int bytes = fs_filesz(fd); 
   Log("Load [%d] %s with size: %d", fd, filename, bytes);
+  fs_read(fd, DEFAULT_ENTRY, fs_filesz(fd));  // 读文件
+  fs_close(fd);                          // 关闭文件
+  return (uintptr_t)DEFAULT_ENTRY;
 
-  void *pa;
-  void *va = (void *)DEFAULT_ENTRY;  // 默认程序加载虚拟地址
-
-  // 按页加载程序内容，并为每一页分配物理页并建立页表映射
-  while (bytes > 0) {
-    pa = new_page();             // 分配一页物理内存
-    _map(as, va, pa);            // 建立虚拟地址 va 到物理地址 pa 的映射
-    fs_read(fd, pa, PGSIZE);     // 从文件读取一页内容到物理内存
-    va += PGSIZE;
-    bytes -= PGSIZE;
-  }
-
-  fs_close(fd);  // 关闭文件
-  return (uintptr_t)DEFAULT_ENTRY;  // 返回程序入口地址
 
 }
