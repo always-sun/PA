@@ -1,6 +1,6 @@
 #include "common.h"
 
-#define DEFAULT_ENTRY ((void *)0x08048000)
+#define DEFAULT_ENTRY ((void *)0x4000000)
 
 extern void _map(_Protect *p, void *va, void *pa);
 extern void* new_page(void);

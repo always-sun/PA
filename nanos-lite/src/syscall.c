@@ -39,7 +39,7 @@ _RegSet* do_syscall(_RegSet *r) {
       _halt(a[1]);
       break;
     case SYS_write:
-      res = sys_write(a[1], (void*)a[2], a[3]);
+      res = fs_write(a[1], (void*)a[2], a[3]);
       break;
     case SYS_brk:
       res = 0;
