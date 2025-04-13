@@ -1,5 +1,6 @@
 #include "common.h"
-
+#include "fs.h"
+#include "memory.h"
 #define DEFAULT_ENTRY ((void *)0x4000000)
 
 extern void _map(_Protect *p, void *va, void *pa);
@@ -30,8 +31,6 @@ uintptr_t loader(_Protect *as, const char *filename) {
     va += PGSIZE;
     bytes -= len;
   }
-
-
 
   fs_close(fd);
   return (uintptr_t)DEFAULT_ENTRY;
