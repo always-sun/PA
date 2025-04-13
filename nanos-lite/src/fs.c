@@ -129,7 +129,7 @@ size_t fs_write(int fd, const void* buf, size_t len) {
 
 off_t fs_lseek(int fd, off_t offset, int whence)
 {
-  off_t res = 01;
+  off_t res = -1;
   switch(whence)
   {
     case SEEK_SET:
