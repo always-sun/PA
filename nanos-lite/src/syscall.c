@@ -9,7 +9,7 @@ extern int fs_open(const char* pathname, int flags, int mode);
 extern int fs_close(int fd);
 extern off_t fs_lseek(int fd, off_t offset, int whence);
 
- uintptr_t sys_write(int fd, const void *buf, size_t count){
+/* uintptr_t sys_write(int fd, const void *buf, size_t count){
    uintptr_t i = 0;
    if(fd==1||fd==2){
      for(;i<count;i++){
@@ -20,7 +20,7 @@ extern off_t fs_lseek(int fd, off_t offset, int whence);
      return -1;
    }
   return i;
-}
+}*/
 
 _RegSet* do_syscall(_RegSet *r) {
   uintptr_t a[4];
@@ -42,7 +42,7 @@ _RegSet* do_syscall(_RegSet *r) {
       res = fs_write(a[1], (void*)a[2], a[3]);
       break;
     case SYS_brk:
-      res = mm_brk(a[1]);
+      res = 0;
       break;
     case SYS_open:
       res = fs_open((char*)a[1], a[2], a[3]);
