@@ -1,7 +1,7 @@
 #include "common.h"
 #include "syscall.h"
 
-extern int mm_brk(uint32_t new_brk);
+
 extern ssize_t fs_write(int fd, const void* buf, size_t len);
 extern ssize_t fs_read(int fd, void* buf, size_t len);
 extern size_t fs_filesz(int fd);
