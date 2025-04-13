@@ -2,6 +2,7 @@
 
 #define DEFAULT_ENTRY ((void *)0x4000000)
 
+extern void _map(_Protect *p, void *va, void *pa);
 extern void* new_page(void);
 extern void ramdisk_read(void* buf, off_t offset, size_t len);
 extern void ramdisk_write(const void* buf, off_t offset, size_t len);
@@ -20,7 +21,18 @@ uintptr_t loader(_Protect *as, const char *filename) {
   int bytes = fs_filesz(fd); 
   Log("Load [%d] %s with size: %d", fd, filename, bytes);
 
-  fs_read(fd, DEFAULT_ENTRY, fs_filesz(fd));  // 读文件
+  void *pa, *va = DEFAULT_ENTRY;
+   while (bytes > 0) {
+    pa = new_page();                 // 分配物理页
+    _map(as, va, pa);               // 映射虚拟地址到物理地址
+    int len = (bytes >= PGSIZE) ? PGSIZE : bytes;
+    fs_read(fd, pa, len);           // 读取 len 字节数据到物理内存
+    va += PGSIZE;
+    bytes -= len;
+  }
+
+
+
   fs_close(fd);
   return (uintptr_t)DEFAULT_ENTRY;
   }
