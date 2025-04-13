@@ -20,15 +20,7 @@ uintptr_t loader(_Protect *as, const char *filename) {
   int bytes = fs_filesz(fd); 
   Log("Load [%d] %s with size: %d", fd, filename, bytes);
 
-  void *pa,*va = DEFAULT_ENTRY;
-  while(bytes>0){
-  	pa = new_page(); 
-  	_map(as, va, pa);
-  	fs_read(fd, pa, PGSIZE); 
-
-  	va += PGSIZE;
-  	bytes -= PGSIZE;
-  }
+  fs_read(fd, DEFAULT_ENTRY, fs_filesz(fd));  // 读文件
   fs_close(fd);
   return (uintptr_t)DEFAULT_ENTRY;
   }
