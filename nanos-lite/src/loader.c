@@ -15,7 +15,7 @@ extern int fs_close(int fd);
 uintptr_t loader(_Protect *as, const char *filename) {
    /*ramdisk_read(DEFAULT_ENTRY, 0, get_ramdisk_size());
   return (uintptr_t)DEFAULT_ENTRY;*/
-  filename = "/bin/events";
+  filename = "/bin/pal";
   int fd = fs_open(filename, 0, 0);
   int bytes = fs_filesz(fd); 
   Log("Load [%d] %s with size: %d", fd, filename, bytes);
