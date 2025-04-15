@@ -13,11 +13,25 @@ int current_game = 0;
 extern off_t fs_lseek(int fd, off_t offset, int whence);
 
 size_t events_read(void *buf, size_t len) {
-  int key = _read_key();
-  if (key == _KEY_NONE) {
-    sprintf(buf, "t %d\n", _uptime());
-  }
-  return strlen(buf);
+    int key = _read_key();
+    bool down = false;
+    
+    // 检查是否为特殊的按键状态（比如按下和弹起）
+    if (key & 0x0800) {
+        key ^= 0x0800;  // 清除按下标志
+        down = true;    // 设置按下标志
+    }
+    
+    // 如果 key 为 _KEY_NONE，表示没有按键
+    if (key == _KEY_NONE) {
+        unsigned long t = _uptime();  // 获取时间戳
+        sprintf(buf, "t %ld\n", t);   // 输出时间戳
+    } else {
+        // 输出按键事件
+        sprintf(buf, "%s %s\n", down ? "kd" : "ku", keyname[key]);
+    }
+    
+    return strlen(buf);  // 返回 buf 的长度
 }
 
 static char dispinfo[128] __attribute__((used));
