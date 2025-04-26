@@ -53,6 +53,10 @@ struct{
         unsigned:20;
       };
     } eflags;
+
+    CR0 cr0;
+    CR3 cr3;
+
 } CPU_state;
 
 extern CPU_state cpu;
