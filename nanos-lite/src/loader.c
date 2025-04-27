@@ -1,4 +1,5 @@
 #include "common.h"
+#include "memory.h"
 
 #define DEFAULT_ENTRY ((void *)0x8048000)
 
@@ -16,12 +17,32 @@ uintptr_t loader(_Protect *as, const char *filename) {
    /*ramdisk_read(DEFAULT_ENTRY, 0, get_ramdisk_size());
   return (uintptr_t)DEFAULT_ENTRY;*/
   //filename = "/bin/pal";
-  int fd = fs_open(filename, 0, 0);
-  int bytes = fs_filesz(fd); 
-  Log("Load [%d] %s with size: %d", fd, filename, bytes);
+   int fd = fs_open(filename, 0, 0);
+   int bytes = fs_filesz(fd); 
+   Log("Load [%d] %s with size: %d", fd, filename, bytes);
 
-  fs_read(fd, DEFAULT_ENTRY, bytes);
+   //fs_read(fd, DEFAULT_ENTRY, bytes);
+   //fs_close(fd);
 
-  fs_close(fd);
+   int size = fs_filesz(fd);
+   int pagenum = size / PGSIZE;
+   if (size % PGSIZE != 0) {
+      pagenum++;
+   }
+
+   void *pa,*va=DEFAULT_ENTRY;
+
+   for (int i = 0; i < pagenum; i++) {
+        pa = new_page();
+        _map(as, va, pa);
+
+        int read_size = (size >= PGSIZE) ? PGSIZE : size;
+        fs_read(fd, pa, read_size);
+
+        va += PGSIZE;
+        size -= read_size;
+    }
+
+    fs_close(fd);
   return (uintptr_t)DEFAULT_ENTRY;
   }

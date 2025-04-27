@@ -35,5 +35,6 @@ int main() {
 //  ((void (*)(void))entry)();
 
   load_prog("/bin/dummy");
+  printf("loader end\n");
   panic("Should not reach here");
 }
