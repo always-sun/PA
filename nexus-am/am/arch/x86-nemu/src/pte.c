@@ -65,25 +65,19 @@ void _switch(_Protect *p) {
 }
 
 void _map(_Protect *p, void *va, void *pa) {
-  if (OFF(va) || OFF(pa)) {
-        return;
-    }
+ PDE *pdir = p->ptr;
+  uint32_t pd_index = ((uint32_t)va) >> 22 & 0x3ff;
+  PTE *pt = NULL;
+  uint32_t pt_index = ((uint32_t)va) >> 12 & 0x3ff;
+  
+  if (pdir[pd_index] & PTE_P) {
+    pt = (PTE *)(pdir[pd_index] & ~0xfff);
+  } else {
+    pt = (PTE *)palloc_f();
+    pdir[pd_index] = ((uint32_t)pt & ~0xfff) | PTE_P;
+  }
 
-    PDE *pgdir = (PDE *)p->ptr;
-    PTE *pgtab = NULL;
-
-    PDE *pde = pgdir + PDX(va);
-
-    if (!(*pde & PTE_P)) {
-        pgtab = (PTE *)palloc_f();  
-        *pde = (uintptr_t)pgtab | PTE_P; 
-    }
-
-    pgtab = (PTE *)PTE_ADDR(*pde);
-
-    PTE *pte = pgtab + PTX(va);
-
-    *pte = ((uintptr_t)pa & ~0xfff) | PTE_P;
+  pt[pt_index] = ((uint32_t)pa & ~0xfff) | PTE_P;
 }
 
 void _unmap(_Protect *p, void *va) {
