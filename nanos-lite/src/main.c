@@ -39,5 +39,7 @@ int main() {
   load_prog("/bin/pal");
   printf("load_prog end\n");
 
+  _trap();
+
   panic("Should not reach here");
 }

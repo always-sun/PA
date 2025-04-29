@@ -1,4 +1,5 @@
 #include <x86.h>
+#include <string.h>
 #define PG_ALIGN __attribute((aligned(PGSIZE)))
 
 static PDE kpdirs[NR_PDE] PG_ALIGN;
@@ -84,5 +85,28 @@ void _unmap(_Protect *p, void *va) {
 }
 
 _RegSet *_umake(_Protect *p, _Area ustack, _Area kstack, void *entry, char *const argv[], char *const envp[]) {
-  return NULL;
+  int argc = 0;
+  char *argv0 = NULL;
+  char *envp0 = NULL;
+
+  uint8_t *sp = (uint8_t *)ustack.end;
+
+  sp -= sizeof(char *);
+  memcpy(sp, &envp0, sizeof(char *));
+  sp -= sizeof(char *);
+  memcpy(sp, &argv0, sizeof(char *));
+  sp -= sizeof(int);
+  memcpy(sp, &argc, sizeof(int));
+
+  sp -= sizeof(int);
+  *(int *)sp = 0;
+  sp -= sizeof(_RegSet); 
+  _RegSet *tf = (_RegSet *)sp;
+
+  memset(tf, 0, sizeof(_RegSet)); 
+  tf->eflags = 0x202;             
+  tf->cs = 8;                     
+  tf->eip = (uintptr_t)entry;      
+
+  return (_RegSet *)tf;
 }
