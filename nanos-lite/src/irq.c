@@ -6,11 +6,13 @@ extern _RegSet* schedule(_RegSet *prev);
 static _RegSet* do_event(_Event e, _RegSet* r) {
   switch (e.event) {
     case _EVENT_SYSCALL: 
-      return do_syscall(r);
+      //return do_syscall(r);
+      do_syscall(r);
+      printf("event schedule-1\n");
+      return schedule(r);
 
     case _EVENT_TRAP:
       printf("event trapped\n");
-      printf("event trapped-1\n");
       return schedule(r);
 
     default: panic("Unhandled event ID = %d", e.event);
