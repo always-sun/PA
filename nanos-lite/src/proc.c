@@ -27,13 +27,29 @@ void load_prog(const char *filename) {
 }
 
 _RegSet* schedule(_RegSet *prev) {
+  static int counter = 0;
+  const int RATIO = 10;  
 
   if (current != NULL) {
     current->tf = prev;
   }
 
   //current = &pcb[0];  
-  current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
+  //current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
+  if (current == NULL || current == &pcb[1]) {
+    // 切回仙剑
+    current = &pcb[0];
+    counter = 0;
+  } else {
+    // 当前是 pal
+    if (counter < RATIO) {
+      counter++;
+      current = &pcb[0];  // 继续运行 pal
+    } else {
+      current = &pcb[1];  // 切换到 hello
+    }
+  }
+
   Log("Switching to process with page dir PTR=0x%08x\n", (uint32_t)current->as.ptr);
 
   _switch(&current->as);
