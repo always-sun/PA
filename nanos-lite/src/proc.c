@@ -43,12 +43,12 @@ _RegSet* schedule(_RegSet *prev) {
   //current = &pcb[0];  
   //current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
   if (current == NULL || current == &pcb[1]) {
-    // 切回仙剑
+    // 切回pal/videotest
     //current = &pcb[0];
     current = (current_game == 0 ? &pcb[0] : &pcb[2]);
     counter = 0;
   } else {
-    // 当前是 pal
+    // 当前是 pal/videotest
     if (counter < RATIO) {
       counter++;
       current = (current_game == 0 ? &pcb[0] : &pcb[2]);
