@@ -31,7 +31,7 @@ _RegSet* do_syscall(_RegSet *r) {
   a[2] = SYSCALL_ARG3(r);
   a[3] = SYSCALL_ARG4(r);
 
-  Log("Syscall ID = %d", a[0]);
+  //Log("Syscall ID = %d", a[0]);
 
   uintptr_t res = -1;
 
