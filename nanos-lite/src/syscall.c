@@ -24,11 +24,14 @@ extern int mm_brk(uint32_t new_brk);
 }*/
 
 _RegSet* do_syscall(_RegSet *r) {
+  
   uintptr_t a[4];
   a[0] = SYSCALL_ARG1(r);
   a[1] = SYSCALL_ARG2(r);
   a[2] = SYSCALL_ARG3(r);
   a[3] = SYSCALL_ARG4(r);
+
+  Log("Syscall ID = %d", a[0]);
 
   uintptr_t res = -1;
 
