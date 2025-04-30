@@ -85,21 +85,28 @@ void _unmap(_Protect *p, void *va) {
 }
 
 _RegSet *_umake(_Protect *p, _Area ustack, _Area kstack, void *entry, char *const argv[], char *const envp[]) {
-uint32_t *ptr = ustack.end;
-  for (int i = 0; i < 8; i++) {
-	*ptr = 0x0; 
-  	 ptr--;
-  }
-  *ptr = 0x02 | FL_IF;
-  ptr--; 
-  *ptr = 0x8; 	          ptr--; //cs
-  *ptr = (uint32_t)entry; ptr--; //eip
-  *ptr = 0x0;             ptr--; //error code
-  *ptr = 0x81;            ptr--; //irq id
-  for (int i = 0; i < 8; i++) {
-	*ptr = 0x0;
-  	 ptr--;
-  }
-  ptr++;
-  return (_RegSet *)ptr;
+  int argc = 0;
+  char *argv0 = NULL;
+  char *envp0 = NULL;
+
+  uint8_t *sp = (uint8_t *)ustack.end;
+
+  sp -= sizeof(char *);
+  memcpy(sp, &envp0, sizeof(char *));
+  sp -= sizeof(char *);
+  memcpy(sp, &argv0, sizeof(char *));
+  sp -= sizeof(int);
+  memcpy(sp, &argc, sizeof(int));
+
+  sp -= sizeof(int);
+  *(int *)sp = 0;
+  sp -= sizeof(_RegSet); 
+  _RegSet *tf = (_RegSet *)sp;
+
+  memset(tf, 0, sizeof(_RegSet)); 
+  tf->eflags = 0x202;             
+  tf->cs = 8;                     
+  tf->eip = (uintptr_t)entry;      
+
+  return (_RegSet *)tf;
 }
