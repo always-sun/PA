@@ -32,7 +32,8 @@ _RegSet* schedule(_RegSet *prev) {
     current->tf = prev;
   }
 
-  current = &pcb[0];  
+  //current = &pcb[0];  
+  current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
   Log("Switching to process with page dir PTR=0x%08x\n", (uint32_t)current->as.ptr);
 
   _switch(&current->as);

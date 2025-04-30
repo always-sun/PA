@@ -37,7 +37,8 @@ int main() {
 //load_prog("/bin/dummy");
 
   load_prog("/bin/pal");
-  printf("load_prog end\n");
+  load_prog("/bin/hello");
+  //printf("load_prog  end\n");
 
   _trap();
 
