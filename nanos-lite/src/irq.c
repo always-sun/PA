@@ -10,8 +10,8 @@ static _RegSet* do_event(_Event e, _RegSet* r) {
 
     case _EVENT_TRAP:
       printf("event trapped\n");
-      do_syscall(r);
-       printf("event trapped-1\n");
+      //do_syscall(r);
+     // printf("event trapped-1\n");
       return schedule(r);
 
     default: panic("Unhandled event ID = %d", e.event);
