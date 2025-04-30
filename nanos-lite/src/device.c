@@ -9,7 +9,7 @@ static const char *keyname[256] __attribute__((used)) = {
 };
 
 
-int current_game = 0;
+extern int current_game;
 extern off_t fs_lseek(int fd, off_t offset, int whence);
 
 size_t events_read(void *buf, size_t len) {

@@ -26,6 +26,12 @@ void load_prog(const char *filename) {
   pcb[i].tf = _umake(&pcb[i].as, stack, stack, (void *)entry, NULL, NULL);
 }
 
+
+
+int current_game = 0;
+
+
+
 _RegSet* schedule(_RegSet *prev) {
   static int counter = 0;
   const int RATIO = 10;  
@@ -38,13 +44,14 @@ _RegSet* schedule(_RegSet *prev) {
   //current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
   if (current == NULL || current == &pcb[1]) {
     // 切回仙剑
-    current = &pcb[0];
+    //current = &pcb[0];
+    current = (current_game == 0 ? &pcb[0] : &pcb[2]);
     counter = 0;
   } else {
     // 当前是 pal
     if (counter < RATIO) {
       counter++;
-      current = &pcb[0];  // 继续运行 pal
+      current = (current_game == 0 ? &pcb[0] : &pcb[2]);
     } else {
       current = &pcb[1];  // 切换到 hello
     }
