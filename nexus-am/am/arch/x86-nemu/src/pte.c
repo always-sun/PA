@@ -104,7 +104,7 @@ _RegSet *_umake(_Protect *p, _Area ustack, _Area kstack, void *entry, char *cons
   _RegSet *tf = (_RegSet *)sp;
 
   memset(tf, 0, sizeof(_RegSet)); 
-  tf->eflags = 0x202;             
+  tf->eflags =0x02 | FL_IF;         
   tf->cs = 8;                     
   tf->eip = (uintptr_t)entry;      
 
