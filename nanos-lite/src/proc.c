@@ -26,7 +26,7 @@ void load_prog(const char *filename) {
   pcb[i].tf = _umake(&pcb[i].as, stack, stack, (void *)entry, NULL, NULL);
 }
 
-_RegSet* schedule(_RegSet *prev) {
+/*_RegSet* schedule(_RegSet *prev) {
 
   if (current != NULL) {
     current->tf = prev;
@@ -39,4 +39,37 @@ _RegSet* schedule(_RegSet *prev) {
   _switch(&current->as);
   return current->tf;
 
+}*/
+
+int current_game1 = 0;
+
+void update_current_game(){
+	if(current_game1 == 0){
+		current_game1 = 1;
+	}else if(current_game1 == 1){
+		current_game1 = 0;
+	}else{
+		assert(0);
+	}
+}
+
+static int count=0;
+#define FREQ 52
+_RegSet* schedule(_RegSet *prev) {
+  if(current!=NULL){
+    current->tf=prev;
+  }
+
+
+  if(count==FREQ){
+    current = &pcb[1];
+    count = 0;
+  } else {
+    count++;
+    current = (current_game1 == 0 ? &pcb[0] : &pcb[2]);
+    // Log("The current_game is %d", current_game);
+  }
+
+  _switch(&current->as);
+  return current->tf;
 }
