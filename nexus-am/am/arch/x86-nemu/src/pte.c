@@ -1,5 +1,5 @@
 #include <x86.h>
-
+#include <string.h>
 #define PG_ALIGN __attribute((aligned(PGSIZE)))
 
 static PDE kpdirs[NR_PDE] PG_ALIGN;
@@ -66,11 +66,47 @@ void _switch(_Protect *p) {
 }
 
 void _map(_Protect *p, void *va, void *pa) {
+ PDE *pdir = p->ptr;
+  uint32_t pd_index = ((uint32_t)va) >> 22 & 0x3ff;
+  PTE *pt = NULL;
+  uint32_t pt_index = ((uint32_t)va) >> 12 & 0x3ff;
+  
+  if (pdir[pd_index] & PTE_P) {
+    pt = (PTE *)(pdir[pd_index] & ~0xfff);
+  } else {
+    pt = (PTE *)palloc_f();
+    pdir[pd_index] = ((uint32_t)pt & ~0xfff) | PTE_P;
+  }
+
+  pt[pt_index] = ((uint32_t)pa & ~0xfff) | PTE_P;
 }
 
 void _unmap(_Protect *p, void *va) {
 }
 
 _RegSet *_umake(_Protect *p, _Area ustack, _Area kstack, void *entry, char *const argv[], char *const envp[]) {
-  return NULL;
+  int argc = 0;
+  char *argv0 = NULL;
+  char *envp0 = NULL;
+
+  uint8_t *sp = (uint8_t *)ustack.end;
+
+  sp -= sizeof(char *);
+  memcpy(sp, &envp0, sizeof(char *));
+  sp -= sizeof(char *);
+  memcpy(sp, &argv0, sizeof(char *));
+  sp -= sizeof(int);
+  memcpy(sp, &argc, sizeof(int));
+
+  sp -= sizeof(int);
+  *(int *)sp = 0;
+  sp -= sizeof(_RegSet); 
+  _RegSet *tf = (_RegSet *)sp;
+
+  memset(tf, 0, sizeof(_RegSet)); 
+  tf->eflags =0x02 | FL_IF;         
+  tf->cs = 8;                     
+  tf->eip = (uintptr_t)entry;      
+
+  return (_RegSet *)tf;
 }

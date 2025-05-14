@@ -8,6 +8,7 @@ extern size_t fs_filesz(int fd);
 extern int fs_open(const char* pathname, int flags, int mode);
 extern int fs_close(int fd);
 extern off_t fs_lseek(int fd, off_t offset, int whence);
+extern int mm_brk(uint32_t new_brk);
 
 /* uintptr_t sys_write(int fd, const void *buf, size_t count){
    uintptr_t i = 0;
@@ -23,11 +24,14 @@ extern off_t fs_lseek(int fd, off_t offset, int whence);
 }*/
 
 _RegSet* do_syscall(_RegSet *r) {
+  
   uintptr_t a[4];
   a[0] = SYSCALL_ARG1(r);
   a[1] = SYSCALL_ARG2(r);
   a[2] = SYSCALL_ARG3(r);
   a[3] = SYSCALL_ARG4(r);
+
+  //Log("Syscall ID = %d", a[0]);
 
   uintptr_t res = -1;
 
@@ -42,7 +46,7 @@ _RegSet* do_syscall(_RegSet *r) {
       res = fs_write(a[1], (void*)a[2], a[3]);
       break;
     case SYS_brk:
-      res = 0;
+      res = mm_brk(a[1]);
       break;
     case SYS_open:
       res = fs_open((char*)a[1], a[2], a[3]);

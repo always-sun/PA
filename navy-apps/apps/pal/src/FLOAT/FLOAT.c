@@ -3,13 +3,12 @@
 #include <assert.h>
 
 FLOAT F_mul_F(FLOAT a, FLOAT b) {
-  assert(0);
-  return 0;
+  return (a*b)>>16;
 }
 
 FLOAT F_div_F(FLOAT a, FLOAT b) {
-  assert(0);
-  return 0;
+  assert(b!=0);
+  return ((int64_t)a<<16/b);
 }
 
 FLOAT f2F(float a) {
@@ -23,13 +22,35 @@ FLOAT f2F(float a) {
    * performing arithmetic operations on it directly?
    */
 
-  assert(0);
-  return 0;
+  union {
+  float f;
+  uint32_t u;
+  } v = { .f = a };
+
+  uint32_t sign = v.u >> 31;
+  int32_t exp = ((v.u >> 23) & 0xFF) - 127;
+  uint32_t frac = v.u & 0x7FFFFF;  // 23 bits
+  frac |= 1 << 23;  // 添加隐含的前导1
+
+  // 调整为定点格式：我们希望保留16位小数 => 需要shift
+  int shift = exp - 23 + 16;
+  int32_t result;
+
+  if (shift >= 0) {
+    result = (int32_t)(frac << shift);
+  } else {
+    result = (int32_t)(frac >> -shift);
+  }
+
+  if (sign)
+    result = -result;
+
+  return result;
 }
 
 FLOAT Fabs(FLOAT a) {
-  assert(0);
-  return 0;
+  if ((a & 0x80000000) == 0) return a;
+  else return (-a);
 }
 
 /* Functions below are already implemented */
