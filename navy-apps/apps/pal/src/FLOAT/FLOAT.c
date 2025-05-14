@@ -10,9 +10,9 @@ FLOAT F_mul_F(FLOAT a, FLOAT b) {
 
 FLOAT F_div_F(FLOAT a, FLOAT b) {
   assert(b!=0);
-  return ((int64_t)a<<16/b);
+  return (((int64_t)a<<16)/b);
   // make sure dividor can not be 0
-
+  
 }
 
 
