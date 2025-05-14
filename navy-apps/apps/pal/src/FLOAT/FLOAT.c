@@ -80,7 +80,6 @@ FLOAT Fabs(FLOAT a) {
 FLOAT Fsqrt(FLOAT x) {
   FLOAT dt, t = int2F(2);
 
-  printf(" t = %.6f\n",(float)t / (1 << 16));
   do {
     dt = F_div_int((F_div_F(x, t) - t), 2);
     t += dt;
@@ -92,10 +91,9 @@ FLOAT Fsqrt(FLOAT x) {
 FLOAT Fpow(FLOAT x, FLOAT y) {
   /* we only compute x^0.333 */
   FLOAT t2, dt, t = int2F(2);
-  printf("t = %.6f\n",(float)t / (1 << 16));
+ 
   do {
     t2 = F_mul_F(t, t);
-    printf("t2 = %.6f\n",(float)t2 / (1 << 16));
     dt = (F_div_F(x, t2) - t) / 3;
     t += dt;
   } while(Fabs(dt) > f2F(1e-4));
