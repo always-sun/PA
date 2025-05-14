@@ -9,27 +9,10 @@ FLOAT F_mul_F(FLOAT a, FLOAT b) {
 
 
 FLOAT F_div_F(FLOAT a, FLOAT b) {
-  //assert(b!=0);
-  //return ((int64_t)a<<16/b);
+  assert(b!=0);
+  return ((int64_t)a<<16/b);
   // make sure dividor can not be 0
-  assert(b != 0);
-  FLOAT x = Fabs(a);
-  FLOAT y = Fabs(b);
-  FLOAT ret = x / y;
-  x = x % y;
 
-  for (int i = 0; i < 16; i++) {
-    x <<= 1;
-    ret <<= 1;
-    if (x >= y) {
-      x -= y;
-      ret++;
-    }
-  }
-  if (((a ^ b) & 0x80000000) == 0x80000000) {
-    ret = -ret;
-  }
-  return ret;
 }
 
 
