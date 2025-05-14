@@ -9,8 +9,6 @@ FLOAT F_mul_F(FLOAT a, FLOAT b) {
 
 
 FLOAT F_div_F(FLOAT a, FLOAT b) {
-  bool is_negative = ((a ^ b) & 0x80000000) != 0;
-
   // 对输入值取绝对值，进行无符号运算
   FLOAT dividend = Fabs(a);
   FLOAT divisor  = Fabs(b);
@@ -30,7 +28,7 @@ FLOAT F_div_F(FLOAT a, FLOAT b) {
   }
 
   // 根据原始符号调整结果
-  if (is_negative) {
+  if (((a ^ b) & 0x80000000) != 0) {
     quotient = -quotient;
   }
 
