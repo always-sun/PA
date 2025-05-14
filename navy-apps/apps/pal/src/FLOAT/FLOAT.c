@@ -1,15 +1,37 @@
 #include "FLOAT.h"
 #include <stdint.h>
 #include <assert.h>
+#include <stdio.h>
 
 FLOAT F_mul_F(FLOAT a, FLOAT b) {
-  return ((int64_t)a*(int64_t)b)>>16;
+  return ((int64_t)a * (int64_t)b) >> 16;
 }
 
+
 FLOAT F_div_F(FLOAT a, FLOAT b) {
-  assert(b!=0);
-  return ((int64_t)a<<16/b);
+  //assert(b!=0);
+  //return ((int64_t)a<<16/b);
+  // make sure dividor can not be 0
+  assert(b != 0);
+  FLOAT x = Fabs(a);
+  FLOAT y = Fabs(b);
+  FLOAT ret = x / y;
+  x = x % y;
+
+  for (int i = 0; i < 16; i++) {
+    x <<= 1;
+    ret <<= 1;
+    if (x >= y) {
+      x -= y;
+      ret++;
+    }
+  }
+  if (((a ^ b) & 0x80000000) == 0x80000000) {
+    ret = -ret;
+  }
+  return ret;
 }
+
 
 FLOAT f2F(float a) {
   /* You should figure out how to convert `a' into FLOAT without
@@ -57,7 +79,8 @@ FLOAT Fabs(FLOAT a) {
 
 FLOAT Fsqrt(FLOAT x) {
   FLOAT dt, t = int2F(2);
-  printf(t);
+
+  printf(" t = %.6f\n",(float)t / (1 << 16));
   do {
     dt = F_div_int((F_div_F(x, t) - t), 2);
     t += dt;
@@ -69,9 +92,10 @@ FLOAT Fsqrt(FLOAT x) {
 FLOAT Fpow(FLOAT x, FLOAT y) {
   /* we only compute x^0.333 */
   FLOAT t2, dt, t = int2F(2);
-  printf(t);
+  printf("t = %.6f\n",(float)t / (1 << 16));
   do {
     t2 = F_mul_F(t, t);
+    printf("t2 = %.6f\n",(float)t2 / (1 << 16));
     dt = (F_div_F(x, t2) - t) / 3;
     t += dt;
   } while(Fabs(dt) > f2F(1e-4));
