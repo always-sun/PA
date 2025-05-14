@@ -9,9 +9,32 @@ FLOAT F_mul_F(FLOAT a, FLOAT b) {
 
 
 FLOAT F_div_F(FLOAT a, FLOAT b) {
-  assert(b!=0);
-  return (((int64_t)a<<16)/b);
-  // make sure dividor can not be 0
+  bool is_negative = ((a ^ b) & 0x80000000) != 0;
+
+  // 对输入值取绝对值，进行无符号运算
+  FLOAT dividend = Fabs(a);
+  FLOAT divisor  = Fabs(b);
+
+  // 获取整数部分
+  FLOAT quotient = dividend / divisor;
+  FLOAT remainder = dividend % divisor;
+
+  // 模拟二进制长除法以扩展小数部分精度（16位）
+  for (int i = 0; i < 16; i++) {
+    remainder <<= 1;
+    quotient <<= 1;
+    if (remainder >= divisor) {
+      remainder -= divisor;
+      quotient += 1;
+    }
+  }
+
+  // 根据原始符号调整结果
+  if (is_negative) {
+    quotient = -quotient;
+  }
+
+  return quotient;
   
 }
 
