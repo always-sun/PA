@@ -34,7 +34,7 @@ int current_game = 0;
 
 _RegSet* schedule(_RegSet *prev) {
   static int counter = 0;
-  const int RATIO = 10;  
+  const int RATIO = 1000000;  
 
   if (current != NULL) {
     current->tf = prev;
